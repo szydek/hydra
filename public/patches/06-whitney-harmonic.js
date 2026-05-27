@@ -1,42 +1,12 @@
-// John Whitney Style Audio-Reactive Harmonic Motion
-// Multiple oscillators creating complex harmonic patterns
+// licensed with CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
+// by Olivia Jack
+// https://ojack.github.io
 
-a.setSmooth(0.8)
+a.setSmooth(0.85)
 
-harmonic1 = 0
-harmonic2 = 0
-
-update = () => {
-  harmonic1 += (a.fft[0] || 0) * 0.015
-  harmonic2 += (a.fft[1] || 0) * 0.01
-}
-
-osc(15, 0.2, 0.6)
-  .modulateRotate(
-    osc(4, 0.3)
-      .rotate(() => time * 0.2 + harmonic1)
-  )
-  .modulateScale(
-    osc(3, 0.25)
-      .rotate(() => -time * 0.15 + harmonic2),
-    () => 1.2 + Math.sin(time * 0.6) * 0.3 + (a.fft[0] || 0) * 0.2
-  )
-  .add(
-    osc(25, 0.1, 0.4)
-      .rotate(() => time * 0.25 - harmonic1 * 0.7)
-      .modulateRotate(osc(2, 0.4), 0.3)
-  )
-  .mult(
-    osc(8, 0.3, 0.8)
-      .rotate(() => -time * 0.1 + harmonic2)
-  )
-  .color(
-    () => 0.9 + Math.sin(time * 0.4 + harmonic1) * 0.1,
-    () => 0.5 + Math.cos(time * 0.3 + harmonic2) * 0.3,
-    () => 0.7 + Math.sin(time * 0.5) * 0.2 + (a.fft[2] || 0) * 0.2
-  )
-  .contrast(1.1)
-  .saturate(1.2)
-  .out()
-
-speed = 0.3
+osc(() => 4 + a.fft[0] * 12, 0.1, () => 0.8 + a.fft[2] * 2)
+  .color(() => 1.04 + a.fft[0] * 2, () => a.fft[2] * 1.5, () => -1.1 + a.fft[4] * 2)
+  .rotate(() => 0.30 + a.fft[1] * 0.5, () => 0.1 + a.fft[0] * 0.3)
+  .pixelate(2, 20)
+  .modulate(noise(2.5), () => 1.5 * Math.sin(0.08 * time) + a.fft[0] * 2)
+  .out(o0)
