@@ -192,7 +192,10 @@ ${current}
         this.loadPatch(patchNumber)
       }
       
-      if (e.key === 'a') {
+      const noModifiers = !e.ctrlKey && !e.metaKey && !e.altKey
+      const editorFocused = this.cm && this.cm.hasFocus()
+
+      if (noModifiers && !editorFocused && e.key === 'a') {
         e.preventDefault()
         console.log('a pressed, audioMeter:', this.audioMeter, 'display:', this.audioMeter && this.audioMeter.style.display)
         if (this.audioMeter) {
@@ -200,7 +203,8 @@ ${current}
         }
       }
       
-      if (e.key === 'c') {
+      if (noModifiers && !editorFocused && e.key === 'c') {
+        e.preventDefault()
         const editorContainer = document.getElementById('editor-container')
         if (editorContainer) {
           if (editorContainer.style.opacity === '0') {
@@ -240,7 +244,10 @@ ${current}
     }
     
     console.log('Loaded patches:', Object.keys(this.patches))
-    this.loadPatch(1)
+    const params = new URLSearchParams(window.location.search)
+    if (!params.has('sketch_id') && !params.has('code')) {
+      this.loadPatch(1)
+    }
   }
 
   evalCode(code) {
