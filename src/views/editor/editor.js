@@ -28,6 +28,11 @@ export default class Editor extends EventEmitter {
     // container.appendChild(el)
 
     this.mutator = new Mutator(this);
+    
+    this.patches = {}
+    this.currentPatch = null
+    this.initPatchLoader()
+    setTimeout(() => this.setupAudioMeter(), 1000)
 
     const extraKeys = {}
     // const evalCode = (code) => {
@@ -176,6 +181,155 @@ ${current}
       end: pos2,
       text: str
     }
+  }
+
+  initPatchLoader() {
+    this.loadPatchList()
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key >= '0' && e.key <= '9') {
+        const patchNumber = parseInt(e.key)
+        this.loadPatch(patchNumber)
+      }
+      
+      if (e.key === 'a') {
+        if (this.audioMeter) {
+          this.audioMeter.style.display = this.audioMeter.style.display === 'none' ? 'block' : 'none'
+        }
+      }
+      
+      if (e.key === 'c') {
+        const editorContainer = document.getElementById('editor-container')
+        if (editorContainer) {
+          if (editorContainer.style.opacity === '0') {
+            editorContainer.style.opacity = '1'
+            editorContainer.style.pointerEvents = 'all'
+          } else {
+            editorContainer.style.opacity = '0'
+            editorContainer.style.pointerEvents = 'none'
+          }
+        }
+      }
+    })
+  }
+
+  async loadPatchList() {
+    const patchFiles = [
+      { number: 0, file: '00-mono-voronoi.js' },
+      { number: 1, file: '01-opening.js' },
+      { number: 2, file: '02-geometric.js' },
+      { number: 3, file: '03-macro.js' },
+      { number: 4, file: '04-video.js' },
+      { number: 5, file: '05-whitney-spirals.js' },
+      { number: 6, file: '06-whitney-harmonic.js' },
+      { number: 7, file: '07-whitney-lattice.js' },
+      { number: 8, file: '08-whitney-dots.js' },
+      { number: 9, file: '09-whitney-pendulum.js' }
+    ]
+
+    for (const patch of patchFiles) {
+      try {
+        const response = await fetch(`/patches/${patch.file}`)
+        const code = await response.text()
+        this.patches[patch.number] = { filename: patch.file, code: code }
+      } catch (error) {
+        console.error(`Failed to load patch ${patch.file}:`, error)
+      }
+    }
+    
+    console.log('Loaded patches:', Object.keys(this.patches))
+    this.loadPatch(1)
+  }
+
+  evalCode(code) {
+    try {
+      hush()
+      fade = 1
+      new Function(code)()
+    } catch(e) {
+      console.error('Patch eval error:', e)
+    }
+  }
+
+  loadPatch(patchNumber) {
+    if (this.patches[patchNumber]) {
+      const patch = this.patches[patchNumber]
+      console.log(`Loading patch ${patchNumber}: ${patch.filename}`)
+      this.setValue(patch.code)
+      this.evalCode(patch.code)
+      this.flashCode()
+      this.currentPatch = patchNumber
+    } else {
+      console.log(`Patch ${patchNumber} not found`)
+    }
+  }
+
+  setupAudioMeter() {
+    const existingMeters = document.querySelectorAll('[data-audio-meter]')
+    existingMeters.forEach(meter => meter.remove())
+    
+    this.audioMeter = document.createElement('div')
+    this.audioMeter.setAttribute('data-audio-meter', 'true')
+    this.audioMeter.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 200px;
+      height: 60px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid rgba(0, 255, 0, 0.5);
+      border-radius: 4px;
+      padding: 8px;
+      z-index: 99999;
+      font-family: monospace;
+      font-size: 10px;
+      color: #0f0;
+      pointer-events: none;
+      user-select: none;
+      display: none;
+    `
+    
+    this.audioBars = []
+    for (let i = 0; i < 8; i++) {
+      const bar = document.createElement('div')
+      bar.style.cssText = `
+        display: inline-block;
+        width: 20px;
+        height: 40px;
+        background: linear-gradient(to top, #0f0, #ff0, #f00);
+        margin: 0 2px;
+        vertical-align: bottom;
+        transition: height 0.1s ease;
+      `
+      bar.style.height = '2px'
+      this.audioMeter.appendChild(bar)
+      this.audioBars.push(bar)
+    }
+    
+    document.body.appendChild(this.audioMeter)
+    setInterval(() => this.updateAudioMeter(), 100)
+  }
+  
+  updateAudioMeter() {
+    try {
+      let fft = []
+      let hasAudio = false
+      
+      if (window.a && window.a.fft) {
+        fft = window.a.fft
+        hasAudio = true
+      }
+      
+      for (let i = 0; i < 8; i++) {
+        let value = 0.02
+        if (hasAudio && fft.length > i) {
+          value = Math.max(0, Math.min(1, fft[i] * 3))
+        }
+        if (this.audioBars[i]) {
+          this.audioBars[i].style.height = Math.max(2, value * 40) + 'px'
+        }
+      }
+    } catch (e) {}
   }
 
 }
