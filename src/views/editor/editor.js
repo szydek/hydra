@@ -193,6 +193,8 @@ ${current}
       }
       
       if (e.key === 'a') {
+        e.preventDefault()
+        console.log('a pressed, audioMeter:', this.audioMeter, 'display:', this.audioMeter && this.audioMeter.style.display)
         if (this.audioMeter) {
           this.audioMeter.style.display = this.audioMeter.style.display === 'none' ? 'block' : 'none'
         }
