@@ -7,7 +7,9 @@ update = ()=>{
   bass += a.fft[0]*0.01
 }
 
-shape(4,0.03)
+fade = 1
+
+shape(4, () => 0.03 + a.fft[0] * 0.05)
   .repeat(
     () => 12 + Math.sin(bass)*4,
     () => 12 + Math.sin(bass*0.7)*4
@@ -16,6 +18,7 @@ shape(4,0.03)
   .scrollX(() => Math.sin(time*0.2)*0.2)
   .scrollY(() => Math.cos(time*0.15)*0.2)
   .color(0.2,0.6,0.9)
+  .brightness(() => -1 + fade + 0.15 + a.fft[0]*0.3 + a.fft[2]*0.2)
   .out()
 
 speed=.3
