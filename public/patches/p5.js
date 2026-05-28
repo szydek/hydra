@@ -1,5 +1,10 @@
 // WITNEY-ISH DOUBLE FAN LINES — Hydra refactor
 
+// Cancel any previous rAF loop from a prior load of this patch
+if (typeof fanGeneration === 'undefined') fanGeneration = 0
+fanGeneration++
+const myGeneration = fanGeneration
+
 a.show()
 a.setBins(6)
 a.setSmooth(0.88)
@@ -88,6 +93,7 @@ drawFan = (anchor, dir, spread, len, hue, satScale) => {
 }
 
 updateFans = () => {
+  if (fanGeneration !== myGeneration) return
   let now = performance.now()
   let dt = clamp((now - lastTime) / 16.6667, 0.5, 1.8)
   lastTime = now
