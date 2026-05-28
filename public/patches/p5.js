@@ -5,7 +5,6 @@ if (typeof fanGeneration === 'undefined') fanGeneration = 0
 fanGeneration++
 const myGeneration = fanGeneration
 
-a.show()
 a.setBins(6)
 a.setSmooth(0.88)
 

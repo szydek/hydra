@@ -195,11 +195,12 @@ ${current}
       const noModifiers = !e.ctrlKey && !e.metaKey && !e.altKey
       const editorFocused = this.cm && this.cm.hasFocus()
 
-      if (noModifiers && !editorFocused && e.key === 'a') {
+      if (noModifiers && e.key === 'a') {
         e.preventDefault()
-        console.log('a pressed, audioMeter:', this.audioMeter, 'display:', this.audioMeter && this.audioMeter.style.display)
+        console.log('a fired, meter:', !!this.audioMeter, 'display:', this.audioMeter?.style.display)
         if (this.audioMeter) {
           this.audioMeter.style.display = this.audioMeter.style.display === 'none' ? 'block' : 'none'
+          console.log('a toggled to:', this.audioMeter.style.display)
         }
       }
       
@@ -216,7 +217,7 @@ ${current}
           }
         }
       }
-    })
+    }, true)
   }
 
   async loadPatchList() {
