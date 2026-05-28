@@ -221,16 +221,16 @@ ${current}
 
   async loadPatchList() {
     const patchFiles = [
-      { number: 0, file: '00-mono-voronoi.js' },
-      { number: 1, file: '01-opening.js' },
-      { number: 2, file: '02-geometric.js' },
-      { number: 3, file: '03-macro.js' },
-      { number: 4, file: '04-video.js' },
-      { number: 5, file: '05-whitney-spirals.js' },
-      { number: 6, file: '06-whitney-harmonic.js' },
-      { number: 7, file: '07-whitney-lattice.js' },
-      { number: 8, file: '08-whitney-dots.js' },
-      { number: 9, file: '09-whitney-pendulum.js' }
+      { number: 0, file: 'p0.js' },
+      { number: 1, file: 'p1.js' },
+      { number: 2, file: 'p2.js' },
+      { number: 3, file: 'p3.js' },
+      { number: 4, file: 'p4.js' },
+      { number: 5, file: 'p5.js' },
+      { number: 6, file: 'p6.js' },
+      { number: 7, file: 'p7.js' },
+      { number: 8, file: 'p8.js' },
+      { number: 9, file: 'p9.js' }
     ]
 
     for (const patch of patchFiles) {
