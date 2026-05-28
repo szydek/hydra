@@ -19,32 +19,35 @@ Live-coding visual synthesizer with audio-reactive patches and keyboard controls
 
 ## Patches
 
-Patches live in `public/patches/`. They are plain Hydra JavaScript files loaded and executed via `new Function(code)()`.
+Patches live in `public/patches/` as generic slot files `p0.js`–`p9.js`. They are plain Hydra JavaScript files loaded and executed via `new Function(code)()`.
 
-| # | File | Description |
-|---|------|-------------|
-| 0 | `00-mono-voronoi.js` | Monochrome voronoi, bass-reactive colorama |
-| 1 | `01-opening.js` | Bass-reactive geometric grid |
-| 2 | `02-geometric.js` | Audio-reactive shape patterns |
-| 3 | `03-macro.js` | Video texture with audio-reactive speed |
-| 4 | `04-video.js` | Dimension-building voronoi |
-| 5 | `05-whitney-spirals.js` | Canvas 2D fan lines, quantized color |
-| 6 | `06-whitney-harmonic.js` | Harmonic motion patterns |
-| 7 | `07-whitney-lattice.js` | Lattice geometry |
-| 8 | `08-whitney-dots.js` | Crazy squares feedback loop |
-| 9 | `09-whitney-pendulum.js` | Pendulum motion |
+| Key | File | Notes |
+|-----|------|-------|
+| `0` | `public/patches/p0.js` | edit to replace |
+| `1` | `public/patches/p1.js` | auto-loads on startup |
+| `2` | `public/patches/p2.js` | |
+| `3` | `public/patches/p3.js` | |
+| `4` | `public/patches/p4.js` | |
+| `5` | `public/patches/p5.js` | |
+| `6` | `public/patches/p6.js` | |
+| `7` | `public/patches/p7.js` | |
+| `8` | `public/patches/p8.js` | |
+| `9` | `public/patches/p9.js` | |
+
+Example/reference patches are in `public/patches/examples/` — copy any of them over a slot file to use.
+
+### Swapping a Slot
+
+Just overwrite the slot file:
+```bash
+cp public/patches/examples/00-mono-voronoi.js public/patches/p0.js
+```
 
 ### Adding a New Patch
 
-1. Create a new file in `public/patches/`, e.g. `public/patches/10-mypatch.js`
-2. Write standard Hydra code ending with `.out(o0)`
-3. Register it in `src/views/editor/editor.js` inside `loadPatchList()`:
-
-```js
-{ number: 10, file: '10-myatch.js' },
-```
-
-4. Press `0` (or your assigned number) to load it live
+1. Write your Hydra code in any file under `public/patches/`
+2. Copy it to a slot: `cp mypatch.js public/patches/p3.js`
+3. Press `3` to load it live — no code changes needed
 
 ### Patch Template
 
@@ -77,6 +80,12 @@ speed = 0.5
 
 ---
 
+## TODO
+
+- **Patch sets** — support named sets of patches selectable via `?set=name` URL param. Each set would be a JSON manifest in `public/patches/sets/` mapping slots 0-9 to any files in the library. Example: `?set=ambient` loads `sets/ambient.json`.
+
+---
+
 ## URL Parameters
 
 | Parameter | Effect |
@@ -103,13 +112,12 @@ npm install
 ```
 hydra/
 ├── public/
-│   └── patches/          # Patch files served statically
-│       ├── 00-mono-voronoi.js
-│       ├── 01-opening.js
-│       └── ...
+│   └── patches/
+│       ├── p0.js … p9.js     # Active slots — edit these
+│       └── examples/          # Reference library
 ├── src/
 │   └── views/
 │       └── editor/
-│           └── editor.js  # Patch loader, audio meter, keyboard controls
-└── PERFORMANCE.md         # This file
+│           └── editor.js      # Patch loader, audio meter, keyboard controls
+└── PERFORMANCE.md             # This file
 ```
