@@ -53,7 +53,7 @@ a2s = { x: fanCanvas.width * 0.58, y: fanCanvas.height * 0.54 }
 lastTime = performance.now()
 
 // ---------- tuning ----------
-threshold = 0.028
+threshold = 0.045
 rise = 0.006
 cooldownMs = 260
 
@@ -134,11 +134,11 @@ updateFans = () => {
   let loudRaw = clamp((levelSmoothed - threshold) / 0.14, 0, 1)
   loudSmoothed = lerp(loudSmoothed, loudRaw, loudSlew)
 
-  let speedMulTarget = Math.min(1 + 0.9 * loudSmoothed + 1.6 * speedKick, 2.6)
+  let speedMulTarget = Math.min(0.01 + 3.0 * loudSmoothed + 2.0 * speedKick, 4.0)
   speedMulSmoothed = lerp(speedMulSmoothed, speedMulTarget, speedMulSlew)
 
-  let dp1 = clamp(0.0085 * speedMulSmoothed * dt, -0.06, 0.06)
-  let dp2 = clamp(0.0112 * speedMulSmoothed * dt, -0.06, 0.06)
+  let dp1 = clamp(0.01 * speedMulSmoothed * dt, -0.08, 0.08)
+  let dp2 = clamp(0.013 * speedMulSmoothed * dt, -0.08, 0.08)
 
   p1 = (p1 + dp1) % (Math.PI * 2)
   p2 = (p2 + dp2 + 0.0016 * Math.sin(p1 * 3) * dt) % (Math.PI * 2)
