@@ -18,7 +18,7 @@ shape(4, () => 0.03 + a.fft[0] * 0.05)
   .scrollX(() => Math.sin(time*0.2)*0.2)
   .scrollY(() => Math.cos(time*0.15)*0.2)
   .color(0.2,0.6,0.9)
-  .brightness(() => -1 + fade + 0.15 + a.fft[0]*0.3 + a.fft[2]*0.2)
+  .brightness(() => -1 + fade - 0.6 + a.fft[0]*0.8 + a.fft[2]*0.4)
   .out()
 
 speed=.3
