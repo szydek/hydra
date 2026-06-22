@@ -1,17 +1,36 @@
 import Gallery from './gallery.js'
+import { fadeToBlack } from '../lib/fade.js'
 let sketches
 
 export default function galleryStore(state, emitter) {
+    let isInitialLoad = true
+
     emitter.on('DOMContentLoaded', function () {
-   
+        const overlay = document.createElement('div')
+        overlay.id = 'fade-overlay'
+        document.documentElement.appendChild(overlay)
+
         sketches = new Gallery((code, sketchFromURL) => {
-          emitter.emit('load and eval code', code, false)
-          if(sketchFromURL) {
-            emitter.emit('ui: hide info')
+          if (isInitialLoad) {
+            isInitialLoad = false
+            emitter.emit('load and eval code', code, false)
+            if(sketchFromURL) {
+              emitter.emit('ui: hide info')
+            } else {
+              emitter.emit('ui: show info')
+            }
+            emitter.emit('render')
           } else {
-            emitter.emit('ui: show info')
+            fadeToBlack(2500, () => {
+              emitter.emit('load and eval code', code, false)
+              if(sketchFromURL) {
+                emitter.emit('ui: hide info')
+              } else {
+                emitter.emit('ui: show info')
+              }
+              emitter.emit('render')
+            })
           }
-          emitter.emit('render')
           // @todo create gallery store
         //  console.warn('gallery callback not let implemented')
         }, state, emitter)
@@ -57,10 +76,12 @@ export default function galleryStore(state, emitter) {
 
       emitter.on('gallery:showExample', () => {
         const editor = state.editor.editor
-        emitter.emit('clear all')
-        sketches.setRandomSketch()
-        emitter.emit('repl: eval', sketches.code)
-        editor.setValue(sketches.code)
+        fadeToBlack(2500, () => {
+          emitter.emit('clear all')
+          sketches.setRandomSketch()
+          emitter.emit('repl: eval', sketches.code)
+          editor.setValue(sketches.code)
+        })
        // repl.eval(editor.getValue())
       })
 }

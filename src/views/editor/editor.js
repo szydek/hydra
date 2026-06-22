@@ -9,6 +9,7 @@ import 'codemirror-minified/addon/comment/comment'
 
 import EventEmitter from 'nanobus'
 import keymaps from './keymaps.js'
+import { fadeToBlack } from '../../lib/fade.js'
 import Mutator from './randomizer/Mutator.js'
 import beautify from 'js-beautify'
 
@@ -265,10 +266,12 @@ ${current}
     if (this.patches[patchNumber]) {
       const patch = this.patches[patchNumber]
       console.log(`Loading patch ${patchNumber}: ${patch.filename}`)
-      this.setValue(patch.code)
-      this.evalCode(patch.code)
-      this.flashCode()
-      this.currentPatch = patchNumber
+      fadeToBlack(2500, () => {
+        this.setValue(patch.code)
+        this.evalCode(patch.code)
+        this.flashCode()
+        this.currentPatch = patchNumber
+      })
     } else {
       console.log(`Patch ${patchNumber} not found`)
     }
