@@ -1,6 +1,6 @@
 //'use babel'
 
-// const p5lib = require('p5')
+import p5 from 'p5'
 
 export default class P5 extends p5{
   constructor ({

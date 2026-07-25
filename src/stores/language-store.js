@@ -93,6 +93,8 @@ export default function store(state, emitter) {
         const languages = {}
         updateAvailableLanguages()
         emitter.emit('render')
+      }).catch(err => {
+        console.warn(`Failed to load language ${lang} (offline?):`, err.message)
       })
   }
   // const path = `${window.location.origin}/locales/es.json`

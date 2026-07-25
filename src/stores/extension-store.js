@@ -72,6 +72,9 @@ export default async function store(state, emitter) {
             d.forEach((ext) => { ext.thumbnail = state.extensions.baseURL +  'thumbnails/' + ext.thumbnail })
             currCategory.entries = d
             emitter.emit('render')
+        }).catch(err => {
+            console.warn(`Failed to load extensions (offline?):`, err.message)
+            currCategory.hasLoaded = true
         })
         }
     })
